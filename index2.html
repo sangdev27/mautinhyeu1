@@ -1,0 +1,828 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Trái Tim Yêu Thương - Dành Cho Người Đặc Biệt</title>
+    <meta name="title" content="Trái Tim Yêu Thương - Dành Cho Người Đặc Biệt">
+    <meta name="description" content="Hiệu ứng trái tim đập dành tặng người bạn yêu thương. Gửi gắm tình cảm qua những trái tim lung linh nhé!">
+    <meta name="keywords" content="trái tim, valentine, tình yêu, hiệu ứng trái tim, quà tặng người yêu, heart animation">
+    <meta name="author" content="With Love">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="Trái Tim Yêu Thương - Dành Cho Người Đặc Biệt">
+    <meta property="og:description" content="Hiệu ứng trái tim đập dành tặng người bạn yêu thương. Gửi gắm tình cảm qua những trái tim lung linh nhé!">
+    <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Trái Tim Yêu Thương">
+    <meta property="og:site_name" content="Trái Tim Yêu Thương">
+    <meta property="og:locale" content="vi_VN">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="">
+    <meta name="twitter:title" content="Trái Tim Yêu Thương - Dành Cho Người Đặc Biệt">
+    <meta name="twitter:description" content="Hiệu ứng trái tim đập dành tặng người bạn yêu thương. Gửi gắm tình cảm qua những trái tim lung linh nhé!">
+    <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+    <meta name="twitter:image:alt" content="Trái Tim Yêu Thương">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+    <!-- Pako library for data decompression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/mouse_slide.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/clicklove.js"></script>
+
+    <script>
+        /**
+         * Giải mã Base64URL string thành object
+         */
+        function decodeData(encodedString) {
+            try {
+                let base64 = encodedString
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/');
+                while (base64.length % 4) {
+                    base64 += '=';
+                }
+                const binaryString = atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const decompressed = pako.inflate(bytes, { to: 'string' });
+                const data = JSON.parse(decompressed);
+                return data;
+            } catch (e) {
+                console.error("Lỗi khi giải mã dữ liệu:", e);
+                return null;
+            }
+        }
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const compressedContent = urlParams.get("c");
+            if (compressedContent) {
+                const content = decodeData(compressedContent);
+                if (content) {
+                    if (name === "title" && content.title) return content.title;
+                    if (name === "popupTitle" && content.popupTitle) return content.popupTitle;
+                    if (name === "message" && content.message) return content.message;
+                    if (name === "image" && content.image) return content.image;
+                    if (name === "music" && content.music) return content.music;
+                    if (name === "tapText" && content.tapText) return content.tapText;
+                }
+            }
+            const regularParam = urlParams.get(name);
+            if (regularParam) {
+                return decodeURIComponent(regularParam);
+            }
+            return null;
+        }
+
+        // Giá trị mặc định
+        const DEFAULT_CONFIG = {
+            title: "Happy Valentine's Day",
+            popupTitle: "Gửi Người Anh Yêu",
+            message: "xin chào em yêu chúc em ngày valentine vui vẻ nhaaa em bấm dô chử nì típ tục nha cưng!",
+            image: "https://love-gift-heart.netlify.app/images.jpeg",
+            music: "https://cdn.shopify.com/s/files/1/0757/9700/4572/files/Westlife-My-Love-_Lyrics.mp3?v=1749742576",
+            tapText: "Chạm vào trái tim em nhé!"
+        };
+
+        // Lấy config từ URL hoặc dùng mặc định
+        const CONFIG = {
+            title: getUrlParameter("title") || DEFAULT_CONFIG.title,
+            popupTitle: getUrlParameter("popupTitle") || DEFAULT_CONFIG.popupTitle,
+            message: getUrlParameter("message") || DEFAULT_CONFIG.message,
+            image: getUrlParameter("image") || DEFAULT_CONFIG.image,
+            music: getUrlParameter("music") || DEFAULT_CONFIG.music,
+            tapText: getUrlParameter("tapText") || DEFAULT_CONFIG.tapText
+        };
+    </script>
+
+    <style type="text/css">
+    html, body {
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      background:
+        radial-gradient(ellipse at top, rgba(255, 230, 230, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, rgba(255, 200, 180, 0.4) 0%, transparent 50%),
+        linear-gradient(180deg, #fff5f5 0%, #ffe4e1 30%, #fdd9d5 70%, #f5cac3 100%);
+      background-attachment: fixed;
+      overflow: hidden;
+    }
+    html::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(253, 149, 149, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 200, 150, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 220, 200, 0.1) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    html::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.02;
+      pointer-events: none;
+      z-index: 0;
+    }
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .photo-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .photo-container img {
+      width: 280px;
+      height: 260px;
+      object-fit: cover;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,88 C50,88 10,58 10,33 C10,18 22,5 38,5 C46,5 50,12 50,12 C50,12 54,5 62,5 C78,5 90,18 90,33 C90,58 50,88 50,88 Z'/%3E%3C/svg%3E");
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,88 C50,88 10,58 10,33 C10,18 22,5 38,5 C46,5 50,12 50,12 C50,12 54,5 62,5 C78,5 90,18 90,33 C90,58 50,88 50,88 Z'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+    }
+    .valentine-title {
+      position: absolute;
+      top: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-family: 'Great Vibes', cursive;
+      font-size: 4rem;
+      color: #d64550;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), 0 0 20px rgba(253, 149, 149, 0.5);
+      white-space: nowrap;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), 0 0 20px rgba(253, 149, 149, 0.5);
+      }
+      to {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), 0 0 30px rgba(253, 149, 149, 0.8), 0 0 40px rgba(253, 149, 149, 0.4);
+      }
+    }
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #fd9595;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(253, 149, 149, 0.3);
+      transition: all 0.3s ease;
+    }
+    .music-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(253, 149, 149, 0.5);
+    }
+    .music-toggle.playing {
+      animation: pulse-music 1s ease-in-out infinite;
+    }
+    @keyframes pulse-music {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    /* Popup Styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .popup-overlay.active {
+      display: flex;
+    }
+    .popup-content {
+      position: relative;
+      width: 90%;
+      max-width: 550px;
+      background: linear-gradient(135deg, #fff8f0 0%, #ffe4e1 50%, #fdd9d5 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: popupOpen 0.5s ease-out;
+      margin: 20px;
+    }
+    @keyframes popupOpen {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .popup-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 35px;
+      height: 35px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      font-size: 18px;
+      color: #d64550;
+      transition: all 0.3s ease;
+    }
+    .popup-close:hover {
+      background: #d64550;
+      color: #fff;
+      transform: rotate(90deg);
+    }
+    .popup-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .popup-header h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5rem;
+      color: #d64550;
+      margin: 0;
+    }
+    .popup-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .popup-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #fd9595;
+      box-shadow: 0 10px 30px rgba(253, 149, 149, 0.4);
+      margin-bottom: 20px;
+    }
+    .popup-message {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.4rem;
+      color: #333;
+      text-align: center;
+      line-height: 1.8;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 15px;
+      border-left: 4px solid #fd9595;
+    }
+    .popup-hearts {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .popup-hearts i {
+      color: #fd9595;
+      font-size: 1.5rem;
+      animation: heartBeat 1s ease-in-out infinite;
+    }
+    .popup-hearts i:nth-child(2) { animation-delay: 0.2s; }
+    .popup-hearts i:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .photo-container img {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .photo-container img:hover {
+      transform: scale(1.05);
+    }
+    .floating-hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .floating-heart {
+      position: absolute;
+      font-size: 20px;
+      opacity: 0;
+      animation: floatHeart 3s ease-in-out infinite;
+    }
+    .floating-heart:nth-child(1) {
+      left: 20%;
+      animation-delay: 0s;
+    }
+    .floating-heart:nth-child(2) {
+      left: 50%;
+      animation-delay: 0.5s;
+    }
+    .floating-heart:nth-child(3) {
+      left: 80%;
+      animation-delay: 1s;
+    }
+    .floating-heart:nth-child(4) {
+      left: 35%;
+      animation-delay: 1.5s;
+    }
+    .floating-heart:nth-child(5) {
+      left: 65%;
+      animation-delay: 2s;
+    }
+    @keyframes floatHeart {
+      0% {
+        bottom: 10%;
+        opacity: 0;
+        transform: scale(0.5) translateX(0);
+      }
+      20% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        bottom: 120%;
+        opacity: 0;
+        transform: scale(1.2) translateX(20px);
+      }
+    }
+    .tap-text {
+      position: absolute;
+      bottom: -45px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+      color: #d64550;
+      white-space: nowrap;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+      animation: fadeInOut 2s ease-in-out infinite;
+    }
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .photo-container img {
+        width: 180px;
+        height: 170px;
+      }
+      .valentine-title {
+        font-size: 2.5rem;
+        top: 15%;
+      }
+      .music-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        top: 15px;
+        right: 15px;
+      }
+      .popup-content {
+        padding: 20px;
+        margin: 15px;
+      }
+      .popup-header h2 {
+        font-size: 2rem;
+      }
+      .popup-image {
+        width: 150px;
+        height: 150px;
+      }
+      .popup-message {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+
+</head>
+<body>
+<audio id="bgMusic" loop></audio>
+<button class="music-toggle playing" id="musicToggle" onclick="toggleMusic()">
+  <span id="musicIcon">🎵</span>
+</button>
+<h1 class="valentine-title" id="mainTitle">Happy Valentine's Day</h1>
+<canvas id="pinkboard"></canvas>
+<div class="photo-container">
+  <img src="images.jpeg" alt="Người yêu thương" onclick="openPopup()" id="heartImage">
+  <div class="floating-hearts" id="floatingHearts">
+    <span class="floating-heart">💕</span>
+    <span class="floating-heart">💗</span>
+    <span class="floating-heart">💖</span>
+    <span class="floating-heart">💓</span>
+    <span class="floating-heart">❤️</span>
+  </div>
+  <span class="tap-text" id="tapText">Chạm vào trái tim em nhé!</span>
+</div>
+
+<!-- Popup -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopupOutside(event)">
+  <div class="popup-content">
+    <div class="popup-close" onclick="closePopup()">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="popup-header">
+      <h2 id="popupTitle">Gửi Người Anh Yêu</h2>
+    </div>
+    <div class="popup-body">
+      <img src="images.jpeg" alt="My Love" class="popup-image" id="popupImage">
+      <div class="popup-message" id="popupMessage"
+     onclick="window.location.href='index3.html'"
+     style="cursor: pointer;">
+  xin chào em yêu chúc em ngày valentine vui vẻ nhaaa em bấm dô chử nì típ tục nha cưng
+</div>
+
+      <div class="popup-hearts">
+        <i class="fa-solid fa-heart"></i>
+        <i class="fa-solid fa-heart"></i>
+        <i class="fa-solid fa-heart"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var isMobile = window.innerWidth <= 768;
+  var scale = isMobile ? 0.55 : 1;
+  var settings = {
+    particles: {
+      length: isMobile ? 300 : 500, // maximum amount of particles
+      duration: 2, // particle duration in sec
+      velocity: 100 * scale, // particle velocity in pixels/sec
+      effect: -0.75, // play with this for a nice effect
+      size: isMobile ? 20 : 30, // particle size in pixels
+    },
+  };
+  (
+          function(){
+            var b=0;
+            var c=["ms","moz","webkit","o"];
+            for(var a=0;a<c.length&&!window.requestAnimationFrame;++a){
+              window.requestAnimationFrame=window[c[a]+"RequestAnimationFrame"];
+              window.cancelAnimationFrame=window[c[a]+"CancelAnimationFrame"]||window[c[a]+"CancelRequestAnimationFrame"]
+            }
+            if(!window.requestAnimationFrame){
+              window.requestAnimationFrame=function(h,e){
+                var d=new Date().getTime();
+                var f=Math.max(0,16-(d-b));
+                var g=window.setTimeout(function(){h(d+f)},f);b=d+f;return g}}if(!window.cancelAnimationFrame){window.cancelAnimationFrame=function(d){clearTimeout(d)}}}());
+  var Point = (function() {
+    function Point(x, y) {
+      this.x = (typeof x !== 'undefined') ? x : 0;
+      this.y = (typeof y !== 'undefined') ? y : 0;
+    }
+    Point.prototype.clone = function() {
+      return new Point(this.x, this.y);
+    };
+    Point.prototype.length = function(length) {
+      if (typeof length == 'undefined')
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+      this.normalize();
+      this.x *= length;
+      this.y *= length;
+      return this;
+    };
+
+    Point.prototype.normalize = function() {
+      var length = this.length();
+      this.x /= length;
+      this.y /= length;
+      return this;
+    };
+    return Point;
+  })();
+
+  var Particle = (function() {
+    function Particle() {
+      this.position = new Point();
+      this.velocity = new Point();
+      this.acceleration = new Point();
+      this.age = 0;
+    }
+    Particle.prototype.initialize = function(x, y, dx, dy) {
+      this.position.x = x;
+      this.position.y = y;
+      this.velocity.x = dx;
+      this.velocity.y = dy;
+      this.acceleration.x = dx * settings.particles.effect;
+      this.acceleration.y = dy * settings.particles.effect;
+      this.age = 0;
+    };
+    Particle.prototype.update = function(deltaTime) {
+      this.position.x += this.velocity.x * deltaTime;
+      this.position.y += this.velocity.y * deltaTime;
+      this.velocity.x += this.acceleration.x * deltaTime;
+      this.velocity.y += this.acceleration.y * deltaTime;
+      this.age += deltaTime;
+    };
+
+    Particle.prototype.draw = function(context, image) {
+      function ease(t) {
+        return (--t) * t * t + 1;
+      }
+      var size = image.width * ease(this.age / settings.particles.duration);
+      context.globalAlpha = 1 - this.age / settings.particles.duration;
+      context.drawImage(image, this.position.x - size / 2, this.position.y - size / 2, size, size);
+    };
+    return Particle;
+  })();
+  /*
+
+  * ParticlePool class
+
+  */
+  var ParticlePool = (function() {
+    var particles,
+            firstActive = 0,
+            firstFree = 0,
+            duration = settings.particles.duration;
+    function ParticlePool(length) {
+// create and populate particle pool
+      particles = new Array(length);
+      for (var i = 0; i < particles.length; i++)
+        particles[i] = new Particle();
+    }
+    ParticlePool.prototype.add = function(x, y, dx, dy) {
+      particles[firstFree].initialize(x, y, dx, dy);
+// handle circular queue
+      firstFree++;
+      if (firstFree == particles.length) firstFree = 0;
+      if (firstActive == firstFree ) firstActive++;
+      if (firstActive == particles.length) firstActive = 0;
+    };
+    ParticlePool.prototype.update = function(deltaTime) {
+      var i;
+// update active particles
+      if (firstActive < firstFree) {
+        for (i = firstActive; i < firstFree; i++)
+          particles[i].update(deltaTime);
+      }
+      if (firstFree < firstActive) {
+        for (i = firstActive; i < particles.length; i++)
+          particles[i].update(deltaTime);
+        for (i = 0; i < firstFree; i++)
+          particles[i].update(deltaTime);
+      }
+// remove inactive particles
+      while (particles[firstActive].age >= duration && firstActive != firstFree) {
+        firstActive++;
+        if (firstActive == particles.length) firstActive = 0;
+      }
+    };
+    ParticlePool.prototype.draw = function(context, image) {
+// draw active particles
+      if (firstActive < firstFree) {
+        for (i = firstActive; i < firstFree; i++)
+          particles[i].draw(context, image);
+      }
+      if (firstFree < firstActive) {
+        for (i = firstActive; i < particles.length; i++)
+          particles[i].draw(context, image);
+        for (i = 0; i < firstFree; i++)
+          particles[i].draw(context, image);
+      }
+    };
+    return ParticlePool;
+  })();
+  /*
+
+  * Putting it all together
+
+  */
+  (function(canvas) {
+    var context = canvas.getContext('2d'),
+            particles = new ParticlePool(settings.particles.length),
+            particleRate = settings.particles.length / settings.particles.duration, // particles/sec
+            time;
+// get point on heart with -PI <= t <= PI
+    function pointOnHeart(t) {
+      return new Point(
+              160 * scale * Math.pow(Math.sin(t), 3),
+              scale * (130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25)
+      );
+
+    }
+
+// creating the particle image using a dummy canvas
+
+    var image = (function() {
+      var canvas = document.createElement('canvas'),
+              context = canvas.getContext('2d');
+      canvas.width = settings.particles.size;
+      canvas.height = settings.particles.size;
+// helper function to create the path
+      function to(t) {
+        var point = pointOnHeart(t);
+        point.x = settings.particles.size / 2 + point.x * settings.particles.size / 350;
+        point.y = settings.particles.size / 2 - point.y * settings.particles.size / 350;
+        return point;
+      }
+// create the path
+      context.beginPath();
+      var t = -Math.PI;
+      var point = to(t);
+      context.moveTo(point.x, point.y);
+      while (t < Math.PI) {
+        t += 0.01; // baby steps!
+        point = to(t);
+        context.lineTo(point.x, point.y);
+      }
+      context.closePath();
+// create the fill
+      context.fillStyle = '#fd9595';
+      // context.fillStyle = '#ea80b0';
+      context.fill();
+// create the image
+      var image = new Image();
+      image.src = canvas.toDataURL();
+      return image;
+    })();
+// render that thing!
+    function render() {
+// next animation frame
+      requestAnimationFrame(render);
+// update time
+      var newTime = new Date().getTime() / 1000,
+              deltaTime = newTime - (time || newTime);
+      time = newTime;
+// clear canvas
+      context.clearRect(0, 0, canvas.width, canvas.height);
+// create new particles
+      var amount = particleRate * deltaTime;
+      for (var i = 0; i < amount; i++) {
+        var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
+        var dir = pos.clone().length(settings.particles.velocity);
+        particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
+      }
+// update and draw particles
+      particles.update(deltaTime);
+      particles.draw(context, image);
+    }
+// handle (re-)sizing of the canvas
+    function onResize() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    window.onresize = onResize;
+// delay rendering bootstrap
+    setTimeout(function() {
+      onResize();
+      render();
+    }, 10);
+  })(document.getElementById('pinkboard'));
+</script>
+<script>
+  // Áp dụng CONFIG vào các element
+  document.getElementById('mainTitle').textContent = CONFIG.title;
+  document.getElementById('popupTitle').textContent = CONFIG.popupTitle;
+  document.getElementById('popupMessage').textContent = CONFIG.message;
+  document.getElementById('heartImage').src = CONFIG.image;
+  document.getElementById('popupImage').src = CONFIG.image;
+  if (document.getElementById('tapText')) {
+    document.getElementById('tapText').textContent = CONFIG.tapText;
+  }
+
+  var bgMusic = document.getElementById('bgMusic');
+  bgMusic.src = CONFIG.music;
+
+  var musicToggle = document.getElementById('musicToggle');
+  var musicIcon = document.getElementById('musicIcon');
+  var isPlaying = false;
+
+  function toggleMusic() {
+    if (isPlaying) {
+      bgMusic.pause();
+      musicIcon.textContent = '🔈';
+      musicToggle.classList.remove('playing');
+    } else {
+      bgMusic.play();
+      musicIcon.textContent = '🎵';
+      musicToggle.classList.add('playing');
+    }
+    isPlaying = !isPlaying;
+  }
+
+  // Auto play when user interacts with page
+  function autoPlay() {
+    bgMusic.play().then(function() {
+      isPlaying = true;
+      musicIcon.textContent = '🎵';
+      musicToggle.classList.add('playing');
+    }).catch(function() {
+      isPlaying = false;
+      musicIcon.textContent = '🔈';
+      musicToggle.classList.remove('playing');
+    });
+    document.removeEventListener('click', autoPlay);
+    document.removeEventListener('touchstart', autoPlay);
+  }
+
+  document.addEventListener('click', autoPlay);
+  document.addEventListener('touchstart', autoPlay);
+
+  // Try to autoplay on load
+  window.addEventListener('load', function() {
+    bgMusic.play().then(function() {
+      isPlaying = true;
+      musicIcon.textContent = '🎵';
+      musicToggle.classList.add('playing');
+    }).catch(function() {
+      isPlaying = false;
+      musicIcon.textContent = '🔈';
+      musicToggle.classList.remove('playing');
+    });
+  });
+
+  // Popup functions
+  function openPopup() {
+    document.getElementById('popupOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Ẩn hint sau khi click
+    var hearts = document.getElementById('floatingHearts');
+    var tapText = document.getElementById('tapText');
+    if (hearts) hearts.style.display = 'none';
+    if (tapText) tapText.style.display = 'none';
+  }
+
+  function closePopup() {
+    document.getElementById('popupOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function closePopupOutside(event) {
+    if (event.target === document.getElementById('popupOverlay')) {
+      closePopup();
+    }
+  }
+
+  // Close popup with Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closePopup();
+    }
+  });
+</script>
+</body>
+</html>

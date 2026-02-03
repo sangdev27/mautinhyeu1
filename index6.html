@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <link rel="icon" href="assets/images/logo_ready.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/images/logo_ready.png">
+    <!-- Preload critical images for faster loading -->
+    <link rel="preload" href="assets/images/second/book_bg.png" as="image">
+    <link rel="preload" href="assets/images/second/book_bg_back.png" as="image">
+    <link rel="preload" href="assets/images/intro/shooting_heart.gif" as="image">
+    <link rel="preload" href="assets/images/intro/left_cupid.png" as="image">
+    <link rel="preload" href="assets/images/intro/right_cupid.png" as="image">
+    <link rel="preload" href="assets/images/intro/double_heart.png" as="image">
+    <title>Valentine Gift ❤️</title>
+    <meta name="description"
+        content="Có người đã gửi cho bạn một món quà Valentine đặc biệt. Chạm để mở và khám phá...">
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="./">
+    <meta property="og:title" content="Valentine Gift❤️">
+    <meta property="og:description"
+        content="Có người đã gửi cho bạn một món quà Valentine đặc biệt. Chạm để mở và khám phá...">
+    <meta property="og:image" content="./assets/images/logo_ready.png">
+    <meta property="og:locale" content="vi_VN">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Valentine Gift❤️">
+    <meta name="twitter:description"
+        content="Có người đã gửi cho bạn một món quà Valentine đặc biệt. Chạm để mở và khám phá...">
+    <meta name="twitter:image" content="./assets/images/logo_ready.png">
+    <link rel="stylesheet" href="intro_gift/intro.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+Arabic:wght@300;400;500;700&family=Noto+Sans+Devanagari:wght@300;400;500;700&family=Noto+Sans+Hebrew:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&family=Pacifico&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="final_gift/final.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+                "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>
+    <style>
+        #finalScreen {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #200020 0%, #000000 100%);
+        }
+
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input,
+        textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
+    <!-- Chặn DevTools -->
+    <script src="./detect-devtools.js"></script>
+    <script type='text/javascript'>
+        const keyName = 'key';
+        const keyValue = '9ac7ec230e0e4513578f309d6d3579ad';
+        DisableDevtool({
+            tkName: keyName,
+            md5: keyValue,
+            interval: '100',
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Đã xóa phần redirect vì dùng data.json trực tiếp -->
+
+    <div id="introScreen">
+        <video id="backgroundVideo" autoplay loop muted playsinline preload="auto">
+            <source id="videoSource" src="" type="video/mp4">
+        </video>
+        <canvas id="canvas"></canvas>
+        <div id="rotateNotice" style="display:none;">
+            <div class="overlay">
+                <p>Vui lòng xoay màn hình sang ngang để có trải nghiệm tốt nhất ❤️</p>
+            </div>
+        </div>
+
+        <div id="readyToStartOverlay" class="ready-overlay" style="display:none;">
+            <div class="ready-overlay-inner">
+                <img class="ready-overlay-logo" src="assets/images/logo_ready.png" alt="" />
+                <button type="button" id="readyToStartBtn" class="ready-to-start-btn" aria-label="Bắt đầu">
+                    Sẵn sàng ❤️
+                </button>
+            </div>
+        </div>
+
+        <img id="leftCupid" src="assets/images/intro/left_cupid.png" alt="Left Cupid" />
+        <img id="rightCupid" src="assets/images/intro/right_cupid.png" alt="Right Cupid" />
+        <img id="doubleHeart" src="assets/images/intro/double_heart.png" alt="Double Heart" />
+        <div id="doubleHeartGlow" class="double-heart-glow" style="display:none;" aria-hidden="true"></div>
+        <img id="giftBox" src="assets/images/second/gift-box.png" alt="Gift Box" style="display:none;" />
+        <img id="noFinalGiftImg" src="assets/images/second/no_finalgift.gif" alt="" style="display:none;"
+            aria-hidden="true" />
+        <div id="giftBoxGlow" class="double-heart-glow" style="display:none;" aria-hidden="true"></div>
+        <img id="leftBottom" src="assets/images/intro/left_bottom.png" alt="Left Bottom" />
+        <img id="rightBottom" src="assets/images/intro/right_bottom.png" alt="Right Bottom" />
+        <img id="bear" src="assets/images/intro/shooting_heart.gif" alt="Bear" />
+        <button type="button" id="openBookBtn" class="open-book-btn" aria-label="Mở sách" title="Chạm để tiếp tục"
+            style="display: none;">
+            <img class="open-book-arrow" src="assets/images/second/arrow.png" alt="">
+            <img src="assets/images/second/book.png" alt="">
+        </button>
+    </div>
+
+    <div id="secondScreen" aria-hidden="true">
+        <div class="container" id="container">
+            <div class="book-content trnsf-reset">
+                <div class="book">
+                    <div class="face-front" id="portada"></div>
+                    <div class="face-back" id="trsf">
+                        <div class="page-text">
+                            Gửi em yêu dấu của anh,
+
+                            Hôm nay là một ngày đặc biệt, ngày mà anh muốn nói với em những điều từ sâu trong trái tim
+                            mình. Em biết không, từ ngày em bước vào cuộc đời anh, mọi thứ đã thay đổi hoàn toàn. Em
+                            không chỉ là người yêu của anh, mà còn là người bạn đồng hành, là nguồn cảm hứng và là lý do
+                            để anh cố gắng mỗi ngày.
+
+                            Anh muốn cảm ơn em vì đã ở bên cạnh anh, vì đã kiên nhẫn và yêu thương anh vô điều kiện. Em
+                            là ánh sáng trong cuộc đời anh, là ngôi sao sáng nhất trên bầu trời đêm.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book">
+                    <div class="face-front" id="bg-ft1">
+                        <img class="page-image" src="assets/images/second/bookPortada.jpg" alt="">
+                    </div>
+                    <div class="face-back">
+                        <div class="page-text">
+                            Mỗi sáng thức dậy, điều đầu tiên anh nghĩ đến là em. Mỗi buổi tối trước khi ngủ, anh luôn
+                            cảm thấy biết ơn vì có em trong cuộc đời mình. Em đã mang đến cho anh những khoảnh khắc hạnh
+                            phúc nhất, những nụ cười chân thành nhất, và cả những giọt nước mắt khi chúng ta cùng nhau
+                            vượt qua khó khăn.
+
+                            Anh yêu cách em quan tâm đến mọi người xung quanh, yêu nụ cười rạng rỡ của em, yêu cả những
+                            lúc em giận dỗi đáng yêu. Em hoàn hảo trong mắt anh, không phải vì em không có khuyết điểm,
+                            mà vì anh yêu cả những điều đó.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book">
+                    <div class="face-front" id="bg-ft2">
+                        <img class="page-image" src="assets/images/second/cover.png" alt="">
+                    </div>
+                    <div class="face-back">
+                        <div class="page-text">
+                            Anh nhớ những lần chúng ta cùng nhau đi dạo dưới ánh trăng, những lần ngồi cạnh nhau im lặng
+                            nhưng vẫn cảm nhận được sự ấm áp. Anh nhớ những bữa ăn chúng ta cùng nấu, những chuyến đi
+                            chúng ta cùng trải nghiệm, và cả những khoảnh khắc bình dị nhất khi chỉ cần có em bên cạnh.
+
+                            Em không chỉ là người yêu, mà còn là người bạn tốt nhất của anh. Chúng ta có thể chia sẻ mọi
+                            thứ với nhau, từ những niềm vui nhỏ nhất đến những nỗi buồn sâu kín nhất. Em hiểu anh hơn
+                            bất kỳ ai, và anh cũng muốn hiểu em nhiều hơn nữa.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book">
+                    <div class="face-front">
+                        <img class="page-image" src="assets/images/second/ilove.jpg" alt="">
+                    </div>
+                    <div class="face-back" id="portada-back">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="finalLoadingScreen" class="final-loading" aria-hidden="true" style="display: none;">
+        <div class="loading-container">
+            <div class="loading-text">Valentine...</div>
+            <div class="loading-progress-wrapper">
+                <div class="loading-progress-bar" id="loadingProgressBar">
+                    <div class="loading-progress-fill" id="loadingProgressFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="finalScreen" aria-hidden="true" style="display: none;">
+    </div>
+
+    <script src="intro_gift/intro.js"></script>
+    <script>
+        // =================== CONFIGURATION ===================
+        const CONFIG = {
+            dataFile: 'data.json',  // Tên file JSON chứa dữ liệu
+            defaultMusic: '/assets/musics/phepmau.mp3',
+            defaultImage: 'assets/images/second/bookPortada.jpg'
+        };
+
+        // =================== DATA LOADING ===================
+        async function loadValentineData() {
+            try {
+                console.log('📥 Đang tải dữ liệu từ:', CONFIG.dataFile);
+                const response = await fetch(CONFIG.dataFile);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Dữ liệu JSON đã tải:', data);
+                
+                // TRỰC TIẾP TRẢ VỀ DỮ LIỆU - vì JSON của bạn là object trực tiếp
+                return data;
+                
+            } catch (error) {
+                console.error('❌ Lỗi khi tải dữ liệu:', error);
+                return getFallbackData();
+            }
+        }
+
+        function getFallbackData() {
+            console.log('⚠️ Sử dụng dữ liệu mẫu');
+            return {
+                "_id": "fallback-id",
+                "intro": {
+                    "recipientName": "Người yêu dấu",
+                    "backgroundMusic": {
+                        "type": "sample",
+                        "path": CONFIG.defaultMusic,
+                        "name": "Nhạc mặc định"
+                    }
+                },
+                "book": {
+                    "pages": [
+                        {
+                            "pageNumber": 1,
+                            "text": "Gửi em yêu dấu của anh...",
+                            "image": CONFIG.defaultImage
+                        }
+                    ]
+                },
+                "final": {
+                    "enabled": true,
+                    "wishes": [
+                        "Happy Valentine's Day 💖",
+                        "Mãi bên nhau nhé 💕"
+                    ]
+                }
+            };
+        }
+
+        // =================== DATA PROCESSING ===================
+        function processValentineData(valentineData) {
+            if (!valentineData) {
+                console.warn('⚠️ Không có dữ liệu để xử lý');
+                return;
+            }
+
+            console.log('🔄 Đang xử lý dữ liệu Valentine...', valentineData);
+
+            // 1. Xử lý món quà cuối
+            window.hasFinalGift = !!(valentineData.final && valentineData.final.enabled !== false);
+            console.log('🎁 Has final gift:', window.hasFinalGift);
+
+            // 2. Cập nhật tên người nhận
+            if (valentineData.intro && valentineData.intro.recipientName) {
+                const newFullText = ["Happy Valentine", valentineData.intro.recipientName + " ❤️"];
+                window.fullText = newFullText;
+                console.log('👤 Tên người nhận:', valentineData.intro.recipientName);
+            }
+
+            // 3. Xử lý nhạc nền
+            processBackgroundMusic(valentineData);
+
+            // 4. Tạo sách động
+            if (valentineData.book && valentineData.book.pages && Array.isArray(valentineData.book.pages)) {
+                createDynamicBooks(valentineData.book.pages);
+            }
+
+            // 5. Xử lý lời chúc cuối
+            processFinalWishes(valentineData);
+
+            // 6. Xử lý hình ảnh cho màn hình cuối
+            processFinalImages(valentineData);
+
+            console.log('✅ Dữ liệu đã được xử lý xong');
+        }
+
+        function processBackgroundMusic(valentineData) {
+            if (valentineData.intro && valentineData.intro.backgroundMusic) {
+                const musicData = valentineData.intro.backgroundMusic;
+                let musicUrl = '';
+                
+                if (musicData.type === 'file' && musicData.url) {
+                    musicUrl = musicData.url;
+                } else if ((musicData.type === 'sample' || musicData.type === 'preset') && musicData.path) {
+                    // Sửa lỗi: path bắt đầu với / thì không thêm / nữa
+                    musicUrl = musicData.path;
+                }
+                
+                if (musicUrl) {
+                    console.log('🎵 Loading music from:', musicUrl);
+                    const audio = new Audio(musicUrl);
+                    audio.loop = true;
+                    audio.volume = 0.7;
+                    window.backgroundMusic = audio;
+                    
+                    if (window.userHasClickedReady) {
+                        audio.play().catch(err => console.warn('🎵 Không thể phát nhạc:', err));
+                    }
+                }
+            }
+        }
+
+        function processFinalWishes(valentineData) {
+            if (!window.dataMemoryHeartLoveLoom) window.dataMemoryHeartLoveLoom = {};
+            if (!window.dataMemoryHeartLoveLoom.data) window.dataMemoryHeartLoveLoom.data = {};
+            
+            if (valentineData.final && valentineData.final.wishes && Array.isArray(valentineData.final.wishes)) {
+                const wishes = valentineData.final.wishes.filter(w => w && w.trim());
+                window.dataMemoryHeartLoveLoom.data.messages = wishes;
+                window.WISH_SENTENCES = wishes;
+                console.log('💌 Lời chúc cuối:', wishes);
+            } else {
+                window.dataMemoryHeartLoveLoom.data.messages = [];
+                window.WISH_SENTENCES = [];
+            }
+        }
+
+        function processFinalImages(valentineData) {
+            let bookImages = [];
+            if (valentineData.book && valentineData.book.pages && Array.isArray(valentineData.book.pages)) {
+                valentineData.book.pages.forEach(page => {
+                    if (page.image) bookImages.push(page.image);
+                });
+            }
+            
+            const TARGET_IMAGE_COUNT = 8;
+            let finalImages = [];
+            
+            if (bookImages.length >= TARGET_IMAGE_COUNT) {
+                finalImages = bookImages.slice(0, TARGET_IMAGE_COUNT);
+            } else if (bookImages.length > 0) {
+                for (let i = 0; i < TARGET_IMAGE_COUNT; i++) {
+                    finalImages.push(bookImages[i % bookImages.length]);
+                }
+            }
+            
+            if (!window.dataMemoryHeartLoveLoom.data) window.dataMemoryHeartLoveLoom.data = {};
+            window.dataMemoryHeartLoveLoom.data.images = finalImages;
+            console.log('🖼️ Hình ảnh cuối:', finalImages);
+        }
+
+        // =================== DYNAMIC BOOK CREATION ===================
+        function createDynamicBooks(pages) {
+            console.log('📖 Tạo sách với', pages.length, 'trang');
+
+            function initializeBooks() {
+                const bookContent = document.querySelector('.book-content');
+                if (!bookContent) {
+                    setTimeout(initializeBooks, 100);
+                    return;
+                }
+                
+                if (!pages || pages.length === 0) {
+                    console.warn('Không có trang sách');
+                    return;
+                }
+
+                // Tìm trang bìa hiện tại
+                const allBooks = bookContent.querySelectorAll('.book');
+                let coverBook = null;
+                
+                allBooks.forEach(book => {
+                    if (book.querySelector('#portada')) coverBook = book;
+                });
+
+                // Nếu có trang bìa, giữ lại và cập nhật nội dung
+                if (coverBook) {
+                    // Xóa các trang khác
+                    allBooks.forEach(book => {
+                        if (book !== coverBook) book.remove();
+                    });
+                    
+                    // Cập nhật nội dung trang đầu
+                    const coverBack = coverBook.querySelector('.face-back');
+                    if (coverBack) {
+                        let coverText = coverBack.querySelector('.page-text');
+                        if (!coverText) {
+                            coverText = document.createElement('div');
+                            coverText.className = 'page-text';
+                            coverBack.appendChild(coverText);
+                        }
+                        coverText.textContent = pages[0]?.text || '';
+                    }
+                    
+                    // Thêm các trang mới (bắt đầu từ trang 2)
+                    for (let i = 0; i < pages.length; i++) {
+                        if (i > 0) { // Bỏ qua trang đầu (đã có)
+                            const bookElement = createBookElement(pages[i], i, i === pages.length - 1);
+                            bookContent.appendChild(bookElement);
+                        }
+                    }
+                } else {
+                    // Nếu không có trang bìa, tạo mới tất cả
+                    bookContent.innerHTML = '';
+                    pages.forEach((page, index) => {
+                        const bookElement = createBookElement(page, index, index === pages.length - 1);
+                        bookContent.appendChild(bookElement);
+                    });
+                }
+
+                // Cập nhật số trang
+                if (typeof window.setTotalFlips === 'function') {
+                    window.setTotalFlips(pages.length);
+                }
+                
+                // Khởi tạo lại chức năng lật sách
+                setTimeout(() => {
+                    if (typeof window.reinitializeBookFlip === 'function') {
+                        window.reinitializeBookFlip();
+                    }
+                }, 200);
+            }
+
+            function createBookElement(page, index, isLast) {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'book';
+                
+                // Mặt trước
+                const faceFront = document.createElement('div');
+                faceFront.className = 'face-front';
+                if (index === 0) faceFront.id = 'portada';
+                
+                const img = document.createElement('img');
+                img.className = 'page-image';
+                img.alt = `Trang ${index + 1}`;
+                img.src = page.image || CONFIG.defaultImage;
+                img.onerror = function() {
+                    this.src = CONFIG.defaultImage;
+                };
+                faceFront.appendChild(img);
+                
+                // Mặt sau
+                const faceBack = document.createElement('div');
+                faceBack.className = 'face-back';
+                if (index === 0) faceBack.id = 'trsf';
+                if (isLast) faceBack.id = 'portada-back';
+                
+                if (!isLast) {
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'page-text';
+                    textDiv.textContent = page.text || '';
+                    faceBack.appendChild(textDiv);
+                }
+                
+                bookElement.appendChild(faceFront);
+                bookElement.appendChild(faceBack);
+                
+                return bookElement;
+            }
+
+            // Khởi tạo sách khi DOM sẵn sàng
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeBooks);
+            } else {
+                initializeBooks();
+            }
+        }
+
+        // =================== MAIN INITIALIZATION ===================
+        async function initApp() {
+            console.log('🚀 Khởi động ứng dụng...');
+            
+            try {
+                // Đợi DOM sẵn sàng
+                if (document.readyState === 'loading') {
+                    await new Promise(resolve => {
+                        document.addEventListener('DOMContentLoaded', resolve);
+                    });
+                }
+                
+                // Tải và xử lý dữ liệu
+                const data = await loadValentineData();
+                processValentineData(data);
+                
+                console.log('🎉 Ứng dụng đã sẵn sàng!');
+                
+            } catch (error) {
+                console.error('💥 Lỗi khởi động:', error);
+            }
+        }
+
+        // Bắt đầu ứng dụng
+        initApp();
+        
+    </script>
+    <script src="second_gift/second.js"></script>
+</body>
+
+</html>

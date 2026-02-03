@@ -1,0 +1,58 @@
+      {
+        "_id": "697dc3e31647344449064f93",
+        "intro": {
+          "recipientName": "Hương Giang",
+          "backgroundMusic": {
+            "type": "sample",
+            "path": "/assets/musics/phepmau.mp3",
+            "name": "Phép Màu",
+            "url": null
+          }
+        },
+        "book": {
+          "pages": [
+            {
+              "pageNumber": 1,
+              "text": "Tết năm đó có lẽ là cái Tết đặc biệt nhất với anh, vì có em bên cạnh. Giữa không khí rộn ràng đầu năm, điều anh nhớ nhất vẫn là nụ cười của hai đứa mình trong bức ảnh này. Anh mong rằng sau này, nhiều cái Tết nữa mình vẫn sẽ ở cạnh nhau 🎉🎈",
+              "image": "https://sf-static.upanhlaylink.com/img/image_20260203ae06b753e6949fcf9577dcdc742506a9.jpg",
+              "_id": "697dc3e31647344449064f94"
+            },
+            {
+              "pageNumber": 2,
+              "text": "Giữa cả một cánh đồng hoa, người anh thấy đẹp nhất vẫn là em. Khoảnh khắc ấy bình yên đến mức anh chỉ muốn thời gian trôi chậm lại một chút. Cảm ơn em vì đã cùng anh tạo nên những kỷ niệm dịu dàng như này 💞",
+              "image": "https://sf-static.upanhlaylink.com/img/image_202602037a43d49b3c32107f17462e0aa0154850.jpg",
+              "_id": "697dc3e31647344449064f95"
+            },
+            {
+              "pageNumber": 3,
+              "text": "Biển hôm đó rất đẹp, nhưng điều làm anh nhớ mãi là cảm giác được đi cạnh em. Tiếng sóng, gió biển và tiếng cười của hai đứa hòa vào nhau thành một kỷ niệm không thể quên 🌊☔",
+              "image": "https://sf-static.upanhlaylink.com/img/image_202602039fc12c0f8e2a8bbf81e4fd0c86d3e770.jpg",
+              "_id": "697dc3e31647344449064f96"
+            },
+            {
+              "pageNumber": 4,
+              "text": "Tiệc sinh nhật trở nên ý nghĩa hơn vì có em ở bên. Không cần gì quá lớn lao, chỉ cần cùng nhau thổi nến và cười vui như vậy là anh đã thấy đủ hạnh phúc rồi. Cảm ơn em vì đã xuất hiện và làm những ngày đặc biệt của anh trở nên trọn vẹn hơn 🎂💖",
+              "image": "https://sf-static.upanhlaylink.com/img/image_20260203aab216b21fda956b21f283d5681bf90c.jpg",
+              "_id": "697dc3e31647344449064f97"
+            },
+            {
+              "pageNumber": 5,
+              "text": "Khoảnh khắc đứng cạnh em ngắm pháo hoa, anh chỉ ước thời gian dừng lại lâu hơn một chút. Ánh sáng rực rỡ trên bầu trời cũng không bằng niềm vui khi có em bên cạnh. Anh mong rằng sau này, mỗi lần pháo hoa nở, chúng ta vẫn sẽ cùng nhau ngước nhìn như vậy nhé em yêu 💕💖",
+              "image": "https://sf-static.upanhlaylink.com/img/image_20260203abb1c289ab79580358488f592305ef2e.jpg",
+              "_id": "697dc3e31647344449064f98"
+            }
+          ]
+        },
+        "final": {
+          "enabled": true,
+          "wishes": [
+            "Happy Valentine's Day 💖",
+            "Mãi bên nhau nhé 💕",
+            "Anh yêu em nhiều 💓",
+            "iuuu Hương Giang 😘"
+          ]
+        },
+        "createdAt": "2026-01-31T08:57:07.218Z",
+        "updatedAt": "2026-02-02T11:48:42.276Z",
+        "__v": 0
+      }

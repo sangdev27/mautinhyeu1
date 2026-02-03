@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cờ Caro Valentine</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://img.freepik.com/free-vector/gradient-valentine-s-day-background_23-2149242406.jpg?w=2000');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .game-container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .status {
+      font-size: 24px;
+      color: #ff3366;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+      margin: 0 auto 20px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      border: 3px solid #ff6b9d;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .cell:hover {
+      background: rgba(255, 107, 157, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+    }
+
+    .cell.x {
+      color: #ff3366;
+    }
+
+    .cell.o {
+      color: #7cfc00;
+    }
+
+    .reset-btn {
+      padding: 12px 25px;
+      font-size: 18px;
+      background: linear-gradient(135deg, #ff3366, #ff6b9d);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+    }
+
+    .reset-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255, 107, 157, 0.6);
+    }
+
+    .win-animation {
+      animation: pulse 0.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 400px) {
+      .board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+      }
+      
+      .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+      
+      .game-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="status" id="status">Lượt của bạn (❌)</div>
+    
+    <div class="board" id="board"></div>
+    
+    <button class="reset-btn" onclick="resetGame()">Chơi lại</button>
+  </div>
+
+  <script>
+    /***********************
+     * ĐỘ KHÓ: TRUNG BÌNH  *
+     ***********************/
+    const DIFFICULTY = 'easy'; // 'easy' | 'medium' | 'hard'
+
+    let board = Array(9).fill(null);
+    let gameOver = false;
+
+    const boardEl = document.getElementById('board');
+    const statusEl = document.getElementById('status');
+
+    function createBoard() {
+      boardEl.innerHTML = '';
+      board.forEach((value, index) => {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.textContent = value || '';
+        
+        if (value === '❌') {
+          cell.classList.add('x');
+        } else if (value === '❤️') {
+          cell.classList.add('o');
+        }
+        
+        cell.onclick = () => playerMove(index);
+        boardEl.appendChild(cell);
+      });
+    }
+
+    function playerMove(index) {
+      if (board[index] || gameOver) return;
+      board[index] = '❌';
+      updateGame();
+      if (!gameOver) setTimeout(computerMove, 300);
+    }
+
+    function computerMove() {
+      if (DIFFICULTY === 'easy') {
+        randomMove();
+        return;
+      }
+
+      // Trung bình: 40% đánh ngẫu nhiên
+      if (DIFFICULTY === 'medium' && Math.random() < 0.4) {
+        randomMove();
+        return;
+      }
+
+      // Sử dụng thuật toán minimax
+      let bestScore = -Infinity;
+      let move;
+
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === null) {
+          board[i] = '❤️';
+          let score = minimax(board, 0, false);
+          board[i] = null;
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+
+      if (move !== undefined) {
+        board[move] = '❤️';
+        updateGame();
+      }
+    }
+
+    function randomMove() {
+      const empty = board.map((v, i) => v === null ? i : null).filter(v => v !== null);
+      if (empty.length === 0) return;
+      const idx = empty[Math.floor(Math.random() * empty.length)];
+      board[idx] = '❤️';
+      updateGame();
+    }
+
+    function minimax(newBoard, depth, isMax) {
+      const result = checkWinner();
+      if (result !== null) {
+        if (result === '❤️') return 10 - depth;
+        if (result === '❌') return depth - 10;
+        return 0;
+      }
+
+      if (isMax) {
+        let best = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (newBoard[i] === null) {
+            newBoard[i] = '❤️';
+            best = Math.max(best, minimax(newBoard, depth + 1, false));
+            newBoard[i] = null;
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (newBoard[i] === null) {
+            newBoard[i] = '❌';
+            best = Math.min(best, minimax(newBoard, depth + 1, true));
+            newBoard[i] = null;
+          }
+        }
+        return best;
+      }
+    }
+
+    function checkWinner() {
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+
+      for (const [a,b,c] of wins) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          // Hiệu ứng thắng
+          const cells = document.querySelectorAll('.cell');
+          cells[a].classList.add('win-animation');
+          cells[b].classList.add('win-animation');
+          cells[c].classList.add('win-animation');
+          
+          return board[a];
+        }
+      }
+
+      if (board.every(v => v !== null)) return 'draw';
+      return null;
+    }
+
+    function updateGame() {
+      createBoard();
+      const result = checkWinner();
+      if (result) {
+        gameOver = true;
+        
+        if (result === 'draw') {
+          statusEl.textContent = 'Hòa! Chơi lại nhé! 💕';
+        } else {
+          statusEl.textContent = result === '❌' ? 'Bạn thắng! 💖' : 'Máy tính thắng!';
+          
+          // Nếu người chơi thắng → Mở file index6.html
+          if (result === '❌') {
+            setTimeout(() => {
+              statusEl.textContent = 'Đang chuyển trang... 💖';
+              setTimeout(() => {
+                window.location.href = 'index6.html';
+              }, 150);
+            }, 200);
+          }
+        }
+      } else {
+        statusEl.textContent = 'Lượt của bạn (❌)';
+      }
+    }
+
+    function resetGame() {
+      board = Array(9).fill(null);
+      gameOver = false;
+      statusEl.textContent = 'Lượt của bạn (❌)';
+      createBoard();
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>

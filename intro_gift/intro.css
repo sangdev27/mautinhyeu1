@@ -1,0 +1,911 @@
+@font-face {
+    font-family: 'Pacifico';
+    src: url('../assets/fonts/Pacifico-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hiển thị sách trên nền intro (không dùng nền second) */
+  #introScreen{
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  #secondScreen{
+    position: fixed;
+    inset: 0;
+    z-index: 8; /* trên video/canvas, dưới rotateNotice */
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #secondScreen.is-visible{
+    display: flex;
+  }
+  
+  /* Final Loading Screen */
+  #finalLoadingScreen.final-loading{
+    position: fixed;
+    inset: 0;
+    z-index: 250; /* Cao hơn finalScreen */
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #200020 0%, #000000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  #finalLoadingScreen.final-loading.show{
+    display: flex !important;
+    opacity: 1;
+  }
+  
+  .loading-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .loading-text{
+    color: #ff69b4;
+    font-family: 'Pacifico', cursive;
+    font-size: 24px;
+    text-shadow: 0 0 15px rgba(255,105,180,0.9), 0 0 5px rgba(255,20,147,0.6);
+    animation: loadingTextFade 2s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  
+  @keyframes loadingTextFade{
+    0%, 100%{
+      opacity: 0.7;
+    }
+    50%{
+      opacity: 1;
+    }
+  }
+  
+  .loading-progress-wrapper{
+    width: 300px;
+    max-width: 80%;
+  }
+  
+  .loading-progress-bar{
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.2),
+      0 0 20px rgba(255,105,180,0.3);
+    position: relative;
+  }
+  
+  .loading-progress-fill{
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      #ff69b4 0%,
+      #ff1493 50%,
+      #ff69b4 100%
+    );
+    background-size: 200% 100%;
+    border-radius: 10px;
+    box-shadow: 
+      0 0 15px rgba(255,105,180,0.8),
+      0 0 30px rgba(255,20,147,0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    animation: loadingProgressShine 2s linear infinite, loadingProgressGrow 0.3s ease-out;
+    transition: width 0.2s ease;
+  }
+  
+  @keyframes loadingProgressShine{
+    0%{
+      background-position: 0% 0%;
+    }
+    100%{
+      background-position: 200% 0%;
+    }
+  }
+  
+  @keyframes loadingProgressGrow{
+    from{
+      width: 0%;
+    }
+  }
+
+  /* Final Screen */
+  #finalScreen{
+    position: fixed;
+    inset: 0;
+    z-index: 200; /* Cao nhất để hiển thị trên tất cả */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  #finalScreen.is-visible{
+    display: block !important;
+    opacity: 1;
+  }
+  body.book-mode #canvas{
+    display: none !important; /* tắt hiệu ứng tim-ghép-chữ */
+  }
+  body.book-mode #rotateNotice{
+    display: none !important;
+  }
+  body.book-mode #leftCupid,
+  body.book-mode #rightCupid,
+  body.book-mode #doubleHeart,
+  body.book-mode #doubleHeartGlow,
+  body.book-mode #giftBox,
+  body.book-mode #giftBoxGlow,
+  body.book-mode #noFinalGiftImg,
+  body.book-mode #leftBottom,
+  body.book-mode #rightBottom,
+  body.book-mode #bear,
+  body.book-mode #openBookBtn{
+    pointer-events: none;
+  }
+  body.book-mode #openBookBtn{
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Hiệu ứng gợi ý ấn nút (pulse nhẹ) */
+  @keyframes openBookBtnPulse {
+    0%, 100% {
+      transform: translateX(-50%) scale(1);
+      box-shadow: 0 0 16px rgba(255, 120, 146, 0.6), 0 0 32px rgba(255, 120, 146, 0.35);
+    }
+    50% {
+      transform: translateX(-50%) scale(1.05);
+      box-shadow: 0 0 22px rgba(255, 120, 146, 0.75), 0 0 40px rgba(255, 120, 146, 0.45);
+    }
+  }
+
+  /* Nút/icon mở sách (sau intro) */
+  .open-book-btn{
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #ffc9cf;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 0 16px rgba(255, 120, 146, 0.6), 0 0 32px rgba(255, 120, 146, 0.35);
+    transition: opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 50;
+    -webkit-tap-highlight-color: transparent;
+    animation: openBookBtnPulse 2.2s ease-in-out infinite;
+  }
+  .open-book-btn:hover{
+    transform: translateX(-50%) scale(1.04);
+    box-shadow: 0 0 20px rgba(255, 120, 146, 0.7), 0 0 40px rgba(255, 120, 146, 0.4);
+    animation: none;
+  }
+  .open-book-btn:active{
+    transform: translateX(-50%) scale(0.98);
+    animation: none;
+  }
+  .open-book-arrow{
+    display: block;
+    width: 28px;
+    height: auto;
+    pointer-events: none;
+  }
+  .open-book-btn img:not(.open-book-arrow){
+    display: block;
+    width: 36px;
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* Khi tới final CTA (trang cuối): cho phép click vào giftBox */
+  body.final-cta #giftBox {
+    pointer-events: auto;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  body.final-cta #giftBoxGlow {
+    pointer-events: none;
+  }
+
+  /* ===== Book styles (scoped) ===== */
+  #secondScreen .container,
+  #secondScreen .book-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  #secondScreen .container{
+    width: 100%;
+    height: 100vh;
+    background: transparent; /* bỏ nền gradient của second */
+    position: relative;
+  }
+  
+  /* Page indicator */
+  .page-indicator{
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    font-family: 'Pacifico', cursive;
+    font-size: 16px;
+    color: #ff69b4;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .page-indicator.show{
+    opacity: 1;
+  }
+  
+  .page-number{
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  .page-separator{
+    color: #ff87b3;
+    opacity: 0.7;
+  }
+  #secondScreen .book-content{
+    width: 65%;
+    min-width: 250px;
+    max-width: 400px;
+    height: 330px;
+    position: relative;
+    perspective: 1000px;
+    opacity: 1;
+    transition: transform 1s, opacity 0.8s ease;
+  }
+  #secondScreen .book{
+    position: absolute;
+    width: 65%;
+    height: 100%;
+    transition: 1s;
+    transform-style: preserve-3d;
+    transform-origin: left;
+  }
+  /* Chỉ hiện tờ đầu (bìa) lúc mới vào, tránh chớp trang chữ/ảnh bên trong */
+  #secondScreen .book-content .book:not(:first-child){
+    visibility: hidden;
+  }
+  #secondScreen .book-content.ready .book{
+    visibility: visible;
+  }
+  #secondScreen .face-front,
+  #secondScreen .face-back{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    background: white;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  /* Trang có ảnh: bỏ padding để ảnh full trang */
+  #secondScreen .face-front:has(.page-image){
+    padding: 0;
+  }
+  /* Trang có text: bỏ padding của face-back (để page-text tự quản lý padding) */
+  #secondScreen .face-back:has(.page-text){
+    padding: 0;
+  }
+  #secondScreen .face-front{
+    box-shadow: inset 8px 2px 20px -7px black;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+  #secondScreen .face-back{
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateZ(-1px) rotateY(180deg);
+    box-shadow: inset -3px 1px 20px -7px black;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #secondScreen #portada{
+    background-color: #fce4ec;
+    background-image: url('../assets/images/second/book_bg.png');
+  }
+  #secondScreen #portada-back{
+    background-color: #fce4ec;
+    background-image: url('../assets/images/second/book_bg_back.png');
+  }
+  #secondScreen #portada,
+  #secondScreen #portada-back{
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  /* classes JS add/remove */
+  #secondScreen .trnsf{
+    transform: translateX(clamp(60px, 32%, 160px));
+  }
+  #secondScreen .trnsf-reset{
+    transform: translateX(0px);
+  }
+  /* Dịch thêm 128px khi lật tờ cuối */
+  #secondScreen .trnsf-final{
+    transform: translateX(calc(clamp(60px, 32%, 160px) + 128px));
+  }
+
+  /* Ẩn sách khi hiện gift box */
+  #secondScreen .book-content.hide-for-gift{
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Gift box wrapper */
+  #secondScreen .gift-box-wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #secondScreen .gift-box-wrapper.show{
+    display: block !important;
+    opacity: 1;
+  }
+  /* Gift box */
+  #secondScreen .gift-box{
+    width: 210px;
+    height: auto;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    animation: giftPulse 1.8s ease-in-out infinite;
+  }
+  /* Vòng sáng lan tỏa phía sau */
+  #secondScreen .gift-glow-ring{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,105,180,0.8) 0%, rgba(255,20,147,0.5) 30%, rgba(255,105,180,0.2) 50%, transparent 70%);
+    animation: glowRing 2s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  /* Hiệu ứng pulse nhẹ nhàng */
+  @keyframes giftPulse{
+    0%, 100%{
+      transform: scale(1);
+      filter: drop-shadow(0 0 15px rgba(255,105,180,0.6)) drop-shadow(0 0 30px rgba(255,20,147,0.4));
+    }
+    50%{
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 25px rgba(255,105,180,0.8)) drop-shadow(0 0 50px rgba(255,20,147,0.6));
+    }
+  }
+  /* Vòng sáng lan tỏa */
+  @keyframes glowRing{
+    0%, 100%{
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    50%{
+      transform: translate(-50%, -50%) scale(1.4);
+      opacity: 0.4;
+    }
+  }
+  #secondScreen .gift-box:hover{
+    animation: giftPulse 1s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  #secondScreen .page-text{
+    height: auto;
+    max-height: 100%;
+    display: block;
+    text-align: center !important;
+    font-family: 'Pacifico', cursive;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #ff87b3;
+    white-space: pre-line;
+    overflow-y: auto;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    width: 100%;
+    margin: 0;
+  }
+  /* Scrollbar styling cho text dài */
+  #secondScreen .page-text::-webkit-scrollbar{
+    width: 6px;
+  }
+  #secondScreen .page-text::-webkit-scrollbar-track{
+    background: transparent;
+  }
+  #secondScreen .page-text::-webkit-scrollbar-thumb{
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+  }
+  #secondScreen .page-image{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    display: block;
+  }
+
+  #secondScreen .book .img1,
+  #secondScreen .book .img2,
+  #secondScreen .book .img3,
+  #secondScreen .book .img4,
+  #secondScreen .book .img5,
+  #secondScreen .book .img6,
+  #secondScreen .book .img7{
+    border-radius: 10px;
+    height: 240px;
+    width: 200px;
+    align-items: center;
+    margin-top: 30px;
+    margin-left: 20px;
+  }
+  #secondScreen .book .img2{
+    height: 220px;
+    width: 190px;
+    margin-top: 40px;
+  }
+  #secondScreen .book .img4{
+    transform: rotate(10deg);
+  }
+  #secondScreen .book .img5{
+    transform: rotate(-10deg);
+  }
+
+  #secondScreen #bg-ft1{ background-color: aqua; }
+  #secondScreen #bg-ft2{ background-color: rgb(219, 88, 191); }
+  #secondScreen #bg-ft3{ background-color: rgb(75, 72, 74); }
+  #secondScreen #bg-ft4{ background-color: rgb(38, 141, 238); }
+  #secondScreen #bg-ft5{ background-color: rgb(8, 243, 223); }
+  #secondScreen #bg-ft6{ background-color: rgb(104, 211, 17); }
+  
+  #backgroundVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  
+  #canvas {
+    display: block;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  #canvas.loaded {
+    opacity: 1;
+  }
+  
+  #leftCupid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 200px;
+    height: auto;
+  }
+  
+  #leftCupid.loaded {
+    opacity: 1;
+  }
+  
+  #rightCupid {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 200px;
+    height: auto;
+  }
+  
+  #rightCupid.loaded {
+    opacity: 1;
+  }
+  
+  /* Cupids khi đang trượt về giữa */
+  #leftCupid.cupid-converge,
+  #rightCupid.cupid-converge {
+    z-index: 110; /* Cao hơn double heart một chút khi đang trượt */
+    will-change: transform;
+  }
+  
+  #leftCupid.cupid-fade-out,
+  #rightCupid.cupid-fade-out {
+    pointer-events: none;
+  }
+  
+  #doubleHeart {
+    position: fixed;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: top center;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: auto;
+    height: auto;
+  }
+  
+  #doubleHeart.loaded {
+    opacity: 1;
+  }
+
+  /* Glow ring đi kèm doubleHeart (dùng khi biến thành gift-box) */
+  #doubleHeartGlow.double-heart-glow{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 360px;
+    height: 360px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,105,180,0.85) 0%, rgba(255,20,147,0.55) 30%, rgba(255,105,180,0.22) 52%, transparent 72%);
+    animation: glowRing 2s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  body.final-cta #doubleHeartGlow.double-heart-glow.show{
+    opacity: 1;
+  }
+
+  /* DoubleHeart trượt xuống hiện được JS điều khiển (dựa trên size/pos thực) */
+  #doubleHeart.cta-drop{
+    /* giữ lại class để dễ debug, không dùng CSS animation */
+    will-change: transform;
+  }
+  /* Heart đứng giữa trước khi biến đổi */
+  #doubleHeart.cta-heart{
+    top: 50%;
+    left: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition: opacity 0.8s ease;
+    will-change: opacity;
+  }
+  #doubleHeart.cta-heart.fade-out{
+    opacity: 0;
+  }
+  #doubleHeart.cta-gift{
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    height: auto;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, filter, opacity;
+  }
+  #doubleHeart.cta-gift.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: ctaGiftPulse 1.8s ease-in-out infinite;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+  }
+  
+  /* Hiệu ứng nhấn như button khi click - nhẹ nhàng hơn */
+  #doubleHeart.cta-gift.show:active{
+    transform: translate(-50%, -50%) scale(0.97) !important;
+    filter: drop-shadow(0 0 18px rgba(255,105,180,0.65)) drop-shadow(0 0 35px rgba(255,20,147,0.45)) !important;
+    animation-play-state: paused; /* Tạm dừng pulse khi đang nhấn */
+  }
+  
+  /* Hiệu ứng hover nhẹ */
+  #doubleHeart.cta-gift.show:hover:not(:active){
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+  /* (ctaDropToCenter) không dùng nữa */
+  @keyframes ctaGiftPulse{
+    0%, 100%{
+      transform: translate(-50%, -50%) scale(1);
+      filter: drop-shadow(0 0 20px rgba(255,105,180,0.7)) drop-shadow(0 0 40px rgba(255,20,147,0.5));
+    }
+    50%{
+      transform: translate(-50%, -50%) scale(1.1);
+      filter: drop-shadow(0 0 30px rgba(255,105,180,0.9)) drop-shadow(0 0 70px rgba(255,20,147,0.7));
+    }
+  }
+
+  /* GiftBox riêng biệt (không phải swap từ doubleHeart) */
+  #giftBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 120;
+    opacity: 0;
+    width: 320px;
+    height: auto;
+    cursor: pointer;
+    pointer-events: none;
+    will-change: transform, filter, opacity;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  body.final-cta #giftBox {
+    pointer-events: auto;
+  }
+  
+  #giftBox.show {
+    opacity: 1;
+    animation: ctaGiftPulse 1.8s ease-in-out infinite;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+  }
+  
+  /* Hiệu ứng nhấn như button khi click */
+  #giftBox.show:active {
+    transform: translate(-50%, -50%) scale(0.97) !important;
+    filter: drop-shadow(0 0 18px rgba(255,105,180,0.65)) drop-shadow(0 0 35px rgba(255,20,147,0.45)) !important;
+    animation-play-state: paused;
+  }
+  
+  /* Hiệu ứng hover nhẹ */
+  #giftBox.show:hover:not(:active) {
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+
+  /* Glow ring đi kèm giftBox */
+  #giftBoxGlow.double-heart-glow {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 360px;
+    height: 360px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,105,180,0.85) 0%, rgba(255,20,147,0.55) 30%, rgba(255,105,180,0.22) 52%, transparent 72%);
+    animation: glowRing 2s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 119;
+    pointer-events: none;
+  }
+  
+  body.final-cta #giftBoxGlow.double-heart-glow.show {
+    opacity: 1;
+  }
+  
+  #leftBottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: auto;
+    height: auto;
+    transform: scale(0.3);
+    transform-origin: bottom left;
+  }
+  
+  #leftBottom.loaded {
+    opacity: 1;
+  }
+  
+  #rightBottom {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    width: auto;
+    height: auto;
+    transform: scale(0.3);
+    transform-origin: bottom right;
+  }
+  
+  #rightBottom.loaded {
+    opacity: 1;
+  }
+  
+  #bear {
+    position: absolute;
+    left: 10px;
+    bottom: 50px;
+    width: 85px;
+    z-index: 10;
+    opacity: 0;
+    transition: filter 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
+  }
+  
+  #bear.loaded {
+    opacity: 1;
+  }
+  
+  #bear:hover {
+    width: 87px;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+  
+  #rotateNotice .overlay {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(160deg, #ffe4ec 0%, #ffc0cb 25%, #ffb6c1 50%, #ff9ebb 75%, #ff69b4 100%);
+    color: #ff1493;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pacifico', cursive;
+    font-size: 24px;
+    font-weight: 400;
+    text-align: center;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Overlay Sẵn sàng - gradient hồng, chỉ overlay + button */
+  .ready-overlay {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(160deg, #ffe4ec 0%, #ffc0cb 25%, #ffb6c1 50%, #ff9ebb 75%, #ff69b4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: opacity 0.4s ease;
+  }
+
+  .ready-overlay-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ready-overlay-logo {
+    max-width: 180px;
+    height: auto;
+    display: block;
+  }
+
+  .ready-to-start-btn {
+    padding: 12px 28px;
+    font-size: 16px;
+    font-family: 'Pacifico', cursive;
+    color: white;
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255, 105, 180, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ready-to-start-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.5);
+  }
+
+  .ready-to-start-btn:active {
+    transform: scale(0.98);
+  }
+  
+  /* Mobile Landscape (xoay ngang) */
+  @media screen and (max-width: 1024px) and (orientation: landscape) {
+    #leftCupid {
+      max-width: 120px;
+    }
+    
+    #rightCupid {
+      max-width: 120px;
+    }
+    
+    /* Giữ tỉ lệ double heart giống desktop: cupid giảm từ 200px xuống 120px = 0.6 */
+    /* Double heart sẽ scale theo tỉ lệ này */
+    #doubleHeart {
+      transform: translateX(-50%) scale(0.6);
+    }
+    
+    #leftBottom {
+      transform: scale(0.2);
+      transform-origin: bottom left;
+    }
+    
+    #rightBottom {
+      transform: scale(0.2);
+      transform-origin: bottom right;
+    }
+    
+    #bear {
+      width: 60px;
+    }
+  }
+  
+  /* Mobile Portrait (xoay dọc) - đã xử lý bằng JavaScript */
+  @media screen and (max-width: 768px) and (orientation: portrait) {
+    #leftCupid,
+    #rightCupid,
+    #doubleHeart,
+    #leftBottom,
+    #rightBottom {
+      display: none;
+    }
+  }

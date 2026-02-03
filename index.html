@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- SEO Meta Tags -->
+    <title>Thiệp Tình Yêu Online</title>
+    <meta name="description" content="Tạo thiệp tình yêu online miễn phí với hiệu ứng độc đáo. Gửi lời yêu thương đến người thân yêu một cách lãng mạn và đặc biệt nhất.">
+    <meta name="keywords" content="thiệp tình yêu, tạo thiệp, thiệp online, thiệp lãng mạn, tỏ tình, love card">
+    <meta name="author" content="LoveGift">
+    <meta name="robots" content="index, follow">
+
+    <!-- Sitemap -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="Thiệp Tình Yêu Online - Tạo Thiệp Độc Đáo">
+    <meta property="og:description" content="Tạo thiệp tình yêu online miễn phí với hiệu ứng độc đáo. Gửi lời yêu thương đến người thân yêu một cách lãng mạn nhất.">
+    <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Thiệp Tình Yêu Online">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Thiệp Tình Yêu Online - Tạo Thiệp Độc Đáo">
+    <meta name="twitter:description" content="Tạo thiệp tình yêu online miễn phí với hiệu ứng độc đáo. Gửi lời yêu thương đến người thân yêu một cách lãng mạn nhất.">
+    <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+    <meta name="twitter:image:alt" content="Thiệp Tình Yêu Online">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#FFB6C1">
+    <meta name="msapplication-navbutton-color" content="#FFB6C1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FFB6C1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148" type="image/png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="lock-screen" class="screen active">
+        <div class="heart-lock-container">
+            <img src="heart.png" alt="Heart Lock" class="heart-lock-image">
+            <div class="lock-overlay">
+                <p class="lock-title">Nhập mật khẩu nhé cưng</p>
+
+                <div class="number-inputs">
+                    <div class="number-box">
+                        <button class="arrow up" data-index="0">▲</button>
+                        <input type="text" class="digit" value="0" readonly data-index="0">
+                        <button class="arrow down" data-index="0">▼</button>
+                    </div>
+                    <div class="number-box">
+                        <button class="arrow up" data-index="1">▲</button>
+                        <input type="text" class="digit" value="0" readonly data-index="1">
+                        <button class="arrow down" data-index="1">▼</button>
+                    </div>
+                    <div class="number-box">
+                        <button class="arrow up" data-index="2">▲</button>
+                        <input type="text" class="digit" value="0" readonly data-index="2">
+                        <button class="arrow down" data-index="2">▼</button>
+                    </div>
+                    <div class="number-box">
+                        <button class="arrow up" data-index="3">▲</button>
+                        <input type="text" class="digit" value="0" readonly data-index="3">
+                        <button class="arrow down" data-index="3">▼</button>
+                    </div>
+                </div>
+
+                <!-- Không còn error-msg nữa -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cấu hình
+        const CORRECT_CODE = "0207";          // ← Đổi mã ở đây nếu cần
+        const NEXT_PAGE    = "index2.html";   // ← Trang đích khi đúng
+
+        const digits   = document.querySelectorAll('.digit');
+        const upBtns   = document.querySelectorAll('.arrow.up');
+        const downBtns = document.querySelectorAll('.arrow.down');
+
+        // Kiểm tra mã – chỉ chuyển khi đúng, sai thì im lặng
+        function checkCode() {
+            const code = Array.from(digits).map(d => d.value).join('');
+
+            if (code.length === 4) {
+                if (code === CORRECT_CODE) {
+                    // Thành công → fade out rồi chuyển trang
+                    document.body.style.transition = 'opacity 0.7s ease';
+                    document.body.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = NEXT_PAGE;
+                    }, 700);
+                }
+                // Sai → KHÔNG LÀM GÌ CẢ
+            }
+        }
+
+        // Nút tăng
+        upBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = btn.dataset.index;
+                let val = parseInt(digits[idx].value);
+                val = (val + 1) % 10;
+                digits[idx].value = val;
+                checkCode();
+            });
+        });
+
+        // Nút giảm
+        downBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = btn.dataset.index;
+                let val = parseInt(digits[idx].value);
+                val = (val - 1 + 10) % 10;
+                digits[idx].value = val;
+                checkCode();
+            });
+        });
+    </script>
+
+</body>
+</html>
